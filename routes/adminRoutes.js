@@ -1,12 +1,15 @@
 import express from "express";
 import { authenticateJWT, authorizeAdmin } from "../middleware/authMiddleware.js";
 import Employee from "../models/employeeModel.js";
-import { employeeValidation } from "../middleware/employeeValidation.js";
+//import { emplo } from "../middleware/employeeValidation.js";
+
+import { validateEmployee } from "../middleware/joiValidation.js";
+
 
 const router = express.Router();
 
-router.post("/addemployee",authenticateJWT, authorizeAdmin, employeeValidation, async (req, res) => {
-    console.log(req.body);
+router.post("/addemployee",authenticateJWT, authorizeAdmin, validateEmployee, async (req, res) => {
+    //console.log(req.body);
     try{
         const {name, email, mobileNumber, department} = req.body;
 
@@ -25,6 +28,7 @@ router.delete("/deleteemployee/:id", authenticateJWT, authorizeAdmin, async (req
         }
         await employee.destroy();
         res.json({message: "Employee Deleted", employee});
+        
     }catch(error){
         res.status(500).json({message: "Error deleting employee", error: error});
     }
@@ -33,7 +37,6 @@ router.delete("/deleteemployee/:id", authenticateJWT, authorizeAdmin, async (req
 router.patch("/updateemployee/:id", authenticateJWT, authorizeAdmin, async (req, res) => {
     try{
         const id = req.params.id;
-
         const employee = await Employee.findByPk(id);
         if(!employee){
             return res.status(404).json({message: "Employee Not Found"});
@@ -46,7 +49,6 @@ router.patch("/updateemployee/:id", authenticateJWT, authorizeAdmin, async (req,
         await employee.save();
 
         res.json({message: "Employee Updated", employee});
-
     }
     catch(error){
         res.status(500).json({message: "Error updating employee", error: error});
