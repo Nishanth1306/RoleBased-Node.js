@@ -29,6 +29,42 @@ router.delete("/deleteemployee/:id", authenticateJWT, authorizeAdmin, async (req
     }
 });
 
+router.patch("/updateemployee/:id", authenticateJWT, authorizeAdmin, async (req, res) => {
+    try{
+        const id = req.params.id;
+
+        const employee = await Employee.findByPk(id);
+        if(!employee){
+            return res.status(404).json({message: "Employee Not Found"});
+        }
+        const {name, email, mobileNumber, department} = req.body;
+        employee.name = name;
+        employee.email = email;
+        employee.mobileNumber = mobileNumber;
+        employee.department = department;
+        await employee.save();
+
+        res.json({message: "Employee Updated", employee});
+
+    }
+    catch(error){
+        res.status(500).json({message: "Error updating employee", error: error});
+    }
+})
+
+router.get("/allemployees", authenticateJWT, authorizeAdmin, async (req, res) => {
+    try{
+        const employees = await Employee.findAll();
+
+        res.json({message: "All Employees", employees});
+    }
+    catch(error){
+        res.status(500).json({message: "Error fetching employees", error: error});
+    }
+
+});
+
+
 
 
 
