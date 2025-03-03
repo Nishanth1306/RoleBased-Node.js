@@ -1,5 +1,7 @@
   import express from "express";
   import pkg from 'pg';
+  import dotenv from 'dotenv';
+  dotenv.config
   const { Client } = pkg;
   import userRoutes from "./routes/userRoutes.js";
   import adminRoutes from "./routes/adminRoutes.js";
@@ -21,11 +23,11 @@
 
 
   const client = new Client({
-    user: 'postgres',         
-    host: 'localhost',      
-    database: 'employees', 
-    password: 'Nishanth@70', 
-    port: 5432,             
+    user : process.env.USER,     
+    host: process.env.HOST,    
+    database: process.env.DATABASE,
+    password: process.env.PASSWORD,
+    port: process.env.PORT
   });
 
 
