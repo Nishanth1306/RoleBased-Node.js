@@ -1,10 +1,11 @@
 import express from "express";
 import { authenticateJWT, authorizeAdmin } from "../middleware/authMiddleware.js";
 import Employee from "../models/employeeModel.js";
+import { employeeValidation } from "../middleware/employeeValidation.js";
 
 const router = express.Router();
 
-router.post("/addemployee",authenticateJWT, authorizeAdmin, async (req, res) => {
+router.post("/addemployee",authenticateJWT, authorizeAdmin, employeeValidation, async (req, res) => {
     console.log(req.body);
     try{
         const {name, email, mobileNumber, department} = req.body;
