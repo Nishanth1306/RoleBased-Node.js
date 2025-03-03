@@ -9,7 +9,7 @@ export const authenticateJWT = (req, res, next) => {
     try {
         const user = jwt.verify(token, SECRET_KEY);
         req.user = user; 
-        // next();
+        next();
     } catch {
         res.status(403).json({ message: "Invalid Token" });
     }
