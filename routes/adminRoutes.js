@@ -1,6 +1,8 @@
 import express from "express";
 import { authenticateJWT, authorizeAdmin } from "../middleware/authMiddleware.js";
 import Employee from "../models/employeeModel.js";
+import User from "../models/userModel.js";
+import bcrypt from "bcryptjs";
 //import { emplo } from "../middleware/employeeValidation.js";
 
 import { validateEmployee } from "../middleware/joiValidation.js";
@@ -64,12 +66,24 @@ router.get("/allemployees", authenticateJWT, authorizeAdmin, async (req, res) =>
     catch(error){
         res.status(500).json({message: "Error fetching employees", error: error});
     }
-
 });
 
-
-
-
+router.post("/addadmin", authenticateJWT, authorizeAdmin, async (req, res) => {
+        const {username, password} = req.body;
+        try{
+            const existingUser = await User.findOne({where: {username}});
+            if(existingUser){
+                return res.status(400).json({message: "Username already exists. Choose a different one."});
+            }
+        const hashedPassword = await bcrypt.hash(password, 10);
+        const newAdmin = await User.create({username, password : hashedPassword, isAdmin: true, role: "admin"});
+        res.status(201).json({message: "Admin Created", admin: newAdmin});
+    }
+    catch(error){
+        res.status(500).json({message: "Error creating admin", error: error});
+        console.log(error.message);
+    }
+});
 
 
 router.get("/dashboard", authenticateJWT, authorizeAdmin, (req, res) => {
